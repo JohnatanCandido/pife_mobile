@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:pife_mobile/app/models/card.dart';
 
 class OptionsController {
 
@@ -30,7 +30,17 @@ class OptionsController {
     cardAngleTemp = cardAngle;
   }
 
-  void setTenthCard(bool value) {
-    tenthCard = value;
+  void toggleTenthCard() {
+    tenthCard = !tenthCard;
+  }
+
+  List<GameCard> getCards() {
+    int size = tenthCard ? 10 : 9;
+    List<GameCard> cards = [];
+    for (int i = 1; i <= size; i++) {
+      GameCard card = GameCard(i, i.toString(), '', 'assets/img_cartas/${i}_copas.png');
+      cards.add(card);
+    }
+    return cards;
   }
 }

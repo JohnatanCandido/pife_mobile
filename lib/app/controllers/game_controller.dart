@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pife_mobile/app/controllers/opponent_controller.dart';
 import 'package:pife_mobile/app/models/base_player.dart';
 import 'package:pife_mobile/app/models/card.dart';
-import 'package:pife_mobile/app/models/opponent.dart';
 import 'package:pife_mobile/app/models/table.dart';
 import 'package:pife_mobile/app/models/validator.dart';
 
@@ -10,66 +10,40 @@ import 'options_controller.dart';
 class GameController extends ChangeNotifier {
   
   static GameController instance = GameController();
-
-  int numberOfOpponents = 1;
+  
   GameTable table = GameTable();
   late BasePlayer player;
-  late List<Opponent> opponents;
   GameCard? selectedCard;
   late bool blockActions;
   late bool buying;
   late bool won;
-  late bool lost;
   bool showBuyingArea = false;
 
-  Opponent? winner;
+  late Function updateGamePage;
 
   void newGame() {
     player = BasePlayer(true);
-    opponents = [];
     blockActions = false;
     buying = true;
     won = false;
-    lost = false;
-    winner = null;
-    for (int i = 0; i < numberOfOpponents; i++) {
-      opponents.add(Opponent(false));
-    }
+    OpponentController.instance.initializeOpponents();
     table.newGame();
-    table.deal([player, ...opponents]);
-    for (var opponent in opponents) {
-      opponent.organizeCards();
-    }
+    table.deal([player, ...OpponentController.instance.opponents]);
+    OpponentController.instance.organizeOpponentsCards();
   }
 
   void buy(GameCard card) {
-    if (!player.cards.contains(card)) {
-      table.buy(player, table.trash.contains(card));
-      buying = false;
-    }
+    table.buy(player, table.trash.contains(card));
+    buying = false;
     notifyListeners();
   }
 
-  void discard(GameCard card) async {
+  void discard(GameCard card) {
     table.discard(player, card);
     blockActions = true;
-    if (!makeOpponentsPlay()) {
-      blockActions = false;
-      buying = true;
-    }
+    buying = true;
+    OpponentController.instance.callNextPlayer();
     notifyListeners();
-  }
-
-  bool makeOpponentsPlay() {
-    for (Opponent opponent in opponents) {
-      lost = table.play(opponent);
-      if (lost) {
-        winner = opponent;
-        opponent.showHand = true;
-        return true;
-      }
-    }
-    return false;
   }
 
   void checkWin() {
@@ -77,10 +51,6 @@ class GameController extends ChangeNotifier {
       won = true;
       notifyListeners();
     }
-  }
-
-  String getWinnerName() {
-    return 'Opponent ${opponents.indexOf(winner!) + 1}';
   }
 
   void organizeCards(double dx, double screenWidth) {

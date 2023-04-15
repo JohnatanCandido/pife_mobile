@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:pife_mobile/app/models/card.dart';
 
 class CardWidget extends StatelessWidget {
@@ -13,14 +12,6 @@ class CardWidget extends StatelessWidget {
   final double cardScale;
   final bool showCard;
 
-  Transform getImage() {
-    String imgPath = showCard ? card.imgPath : 'assets/img_cartas/fundo_carta.png';
-    return Transform.scale(
-      scale: cardScale,
-      child: Image(image: AssetImage(imgPath))
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (isBeingCarried) {
@@ -32,6 +23,14 @@ class CardWidget extends StatelessWidget {
         angle: angle,
         child: getImage()
       )
+    );
+  }
+
+  Transform getImage() {
+    String imgPath = showCard ? card.imgPath : 'assets/img_cartas/fundo_carta.png';
+    return Transform.scale(
+      scale: cardScale,
+      child: Image(image: AssetImage(imgPath))
     );
   }
 }

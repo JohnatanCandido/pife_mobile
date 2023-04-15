@@ -5,6 +5,10 @@ import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/validator.dart';
 
 class Opponent extends BasePlayer {
+
+  GameCard? boughtCard;
+  GameCard? cardDiscarded;
+  bool playing = false;
   Set<GameCard> cardsInSets = {};
   Set<GameCard> cardsInPairs = {};
 

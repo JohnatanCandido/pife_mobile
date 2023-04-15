@@ -2,7 +2,6 @@ import 'package:pife_mobile/app/models/base_player.dart';
 import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/exceptions.dart';
 import 'package:pife_mobile/app/models/opponent.dart';
-import 'package:pife_mobile/app/models/validator.dart';
 
 class GameTable {
 
@@ -30,33 +29,26 @@ class GameTable {
     }
   }
 
-  bool play(Opponent player) {
-    bool buyFromTrash = trash.isNotEmpty && player.checkBuyFromTrash(trash.last);
-    buy(player, buyFromTrash);
-
-    GameCard cardToDiscard = player.chooseCardToDiscard();
-    discard(player, cardToDiscard);
-
-    player.organizeCards();
-
-    return validateHand(player.cards);
-  }
-
   void buy(BasePlayer player, bool fromTrash) {
     if (player.cards.length == 10) {
       throw AlreadyBoughtException();
     }
+    late GameCard boughtCard;
     if (fromTrash) {
       if (trash.isNotEmpty) {
-        GameCard trashCard = trash.removeLast();
-        player.add(trashCard);
-        player.trashCard = trashCard;
+        boughtCard = trash.removeLast();
+        player.trashCard = boughtCard;
       } else {
         throw NoCardInTrashException();
       }
     } else {
-      checkRefillPack();
-      player.add(pack.removeLast());
+      _checkRefillPack();
+      boughtCard = pack.removeLast();
+    }
+    if (player is Opponent) {
+      (player).boughtCard = boughtCard;
+    } else {
+      player.add(boughtCard);
     }
   }
 
@@ -68,11 +60,21 @@ class GameTable {
       throw InvalidDiscardException();
     }
     player.remove(card);
-    player.trashCard = null;
-    trash.add(card);
+    if (player is Opponent) {
+      (player).cardDiscarded = card;
+    } else {
+      player.trashCard = null;
+      trash.add(card);
+    }
   }
 
-  void checkRefillPack() {
+  void finishOpponentDiscard(Opponent opponent) {
+    opponent.trashCard = null;
+    trash.add(opponent.cardDiscarded!);
+    opponent.cardDiscarded = null;
+  }
+
+  void _checkRefillPack() {
     if (pack.isEmpty) {
       GameCard lastOfTrash = trash.removeLast();
       pack = List.from(trash);
@@ -83,9 +85,16 @@ class GameTable {
 
   GameCard getTopOfPack() {
     if (pack.isEmpty) {
-        checkRefillPack();
+      _checkRefillPack();
     }
     return pack.first;
+  }
+
+  GameCard? topOfTrash() {
+    if (trash.isNotEmpty) {
+      return trash.last;
+    }
+    return null;
   }
 
   GameCard? getSecondToLastFromTrash() {

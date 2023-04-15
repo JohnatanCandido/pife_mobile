@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/player_quantity_menu.dart';
-import 'package:pife_mobile/app/controllers/game_controller.dart';
+
+import '../controllers/opponent_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   void setNumberOfOpponents(int? numberOfOpponents) {
     setState(() {
       if (numberOfOpponents != null) {
-        GameController.instance.numberOfOpponents = numberOfOpponents;
+        OpponentController.instance.numberOfOpponents = numberOfOpponents;
       }
     });
   }
@@ -31,18 +32,18 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               PlayerQuantityMenu(
-                selectedNumber: GameController.instance.numberOfOpponents,
+                selectedNumber: OpponentController.instance.numberOfOpponents,
                 onChanged: setNumberOfOpponents,
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('/play');
+                  Navigator.of(context).pushNamed('/play');
                 },
                 child: const Text('Jogar')
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('/options');
+                  Navigator.of(context).pushNamed('/options');
                 },
                 child: const Text('Options')
               ),

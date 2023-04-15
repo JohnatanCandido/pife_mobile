@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:pife_mobile/app/components/player_hand_example.dart';
+import 'package:pife_mobile/app/components/game_app_bar.dart';
+import 'package:pife_mobile/app/components/options_hand_display.dart';
+import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/options_controller.dart';
 
 class OptionsPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class _OptionsPageState extends State<OptionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green[800],
+      appBar: const GameAppBar(),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -69,7 +71,7 @@ class _OptionsPageState extends State<OptionsPage> {
                         value: OptionsController.instance.tenthCard,
                         onChanged: (value) => {
                           setState(() {
-                            OptionsController.instance.setTenthCard(value!);
+                            OptionsController.instance.toggleTenthCard();
                           })
                         }
                       ),
@@ -77,9 +79,9 @@ class _OptionsPageState extends State<OptionsPage> {
                   ),
                   ElevatedButton(
                     onPressed: () => {
-                      setState(() {
+                      GameController.instance.updateGamePage(() {
                         OptionsController.instance.applyChanges();
-                        Navigator.of(context).pushReplacementNamed('/');
+                        Navigator.of(context).pop();
                       })
                     },
                     child: const Text('Apply')
@@ -88,7 +90,7 @@ class _OptionsPageState extends State<OptionsPage> {
                     onPressed: () => {
                       setState(() {
                         OptionsController.instance.cancel();
-                        Navigator.of(context).pushReplacementNamed('/');
+                        Navigator.of(context).pop();
                       })
                     },
                     child: const Text('Cancel')
@@ -96,9 +98,9 @@ class _OptionsPageState extends State<OptionsPage> {
                 ],
               ),
             ),
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height,
-              child: PlayerExampleWidget()
+              child: OptionsHandDisplay()
             )
           ],
         )
