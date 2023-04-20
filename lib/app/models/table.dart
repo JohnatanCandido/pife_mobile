@@ -33,23 +33,42 @@ class GameTable {
     if (player.cards.length == 10) {
       throw AlreadyBoughtException();
     }
-    late GameCard boughtCard;
+    if (player is Opponent) {
+      _opponentBuy(player, fromTrash);
+    } else {
+      _playerBuy(player, fromTrash);
+    }
+  }
+
+  void _playerBuy(BasePlayer player, bool fromTrash) {
     if (fromTrash) {
       if (trash.isNotEmpty) {
-        boughtCard = trash.removeLast();
+        GameCard boughtCard = trash.removeLast();
         player.trashCard = boughtCard;
+        player.add(boughtCard);
       } else {
         throw NoCardInTrashException();
       }
     } else {
       _checkRefillPack();
-      boughtCard = pack.removeLast();
+      player.add(pack.removeLast());
     }
-    if (player is Opponent) {
-      (player).boughtCard = boughtCard;
+  }
+
+  void _opponentBuy(Opponent opponent, bool fromTrash) {
+    late GameCard boughtCard;
+    if (fromTrash) {
+      if (trash.isNotEmpty) {
+        boughtCard = trash.last;
+        opponent.trashCard = boughtCard;
+      } else {
+        throw NoCardInTrashException();
+      }
     } else {
-      player.add(boughtCard);
+      _checkRefillPack();
+      boughtCard = pack.last;
     }
+    opponent.boughtCard = boughtCard;
   }
 
   void discard(BasePlayer player, GameCard card) {
@@ -59,18 +78,29 @@ class GameTable {
     if (player.trashCard == card) {
       throw InvalidDiscardException();
     }
-    player.remove(card);
     if (player is Opponent) {
       (player).cardDiscarded = card;
     } else {
+      player.remove(card);
       player.trashCard = null;
       trash.add(card);
     }
   }
 
+  void finishOpponentBuy(Opponent opponent) {
+    opponent.add(opponent.boughtCard!);
+    if (pack.last == opponent.boughtCard!) {
+      pack.removeLast();
+    } else {
+      trash.removeLast();
+    }
+    opponent.boughtCard = null;
+  }
+
   void finishOpponentDiscard(Opponent opponent) {
-    opponent.trashCard = null;
+    opponent.remove(opponent.cardDiscarded!);
     trash.add(opponent.cardDiscarded!);
+    opponent.trashCard = null;
     opponent.cardDiscarded = null;
   }
 
@@ -87,7 +117,7 @@ class GameTable {
     if (pack.isEmpty) {
       _checkRefillPack();
     }
-    return pack.first;
+    return pack.last;
   }
 
   GameCard? topOfTrash() {
@@ -100,6 +130,13 @@ class GameTable {
   GameCard? getSecondToLastFromTrash() {
     if (trash.length > 1) {
       return trash[trash.length-2];
+    }
+    return null;
+  }
+
+  GameCard? getSecondToLastFromPack() {
+    if (pack.length > 1) {
+      return pack[pack.length-2];
     }
     return null;
   }

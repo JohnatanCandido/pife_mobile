@@ -1,33 +1,54 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 
-class OptionsController {
+class OptionsController extends ChangeNotifier {
 
   static OptionsController instance = OptionsController();
 
   bool tenthCard = true;
 
-  double cardSpacing = 0.15;
-  double cardHeigth = 0.1;
-  double handArch = 0.02;
-  double cardAngle = 0.15;
+  final double _defaultCardSpacing = 20;
+  final double _defaultDistanceFromBottom = 75;
+  final double _defaultHandArch = 1;
+  final double _defaultCardAngle = 0.2;
 
-  double cardSpacingTemp = 0.15;
-  double cardHeigthTemp = 0.1;
-  double handArchTemp = 0.02;
-  double cardAngleTemp = 0.15;
+  double cardSpacing = 20;
+  double distanceFromBottom = 75;
+  double handArch = 1;
+  double cardAngle = 0.2;
+
+  double cardSpacingTemp = 20;
+  double distanceFromBottomTemp = 75;
+  double handArchTemp = 1;
+  double cardAngleTemp = 0.2;
 
   void applyChanges() {
     cardSpacing = cardSpacingTemp;
-    cardHeigth = cardHeigthTemp;
+    distanceFromBottom = distanceFromBottomTemp;
     handArch = handArchTemp;
     cardAngle = cardAngleTemp;
+    notifyListeners();
   }
 
   void cancel() {
     cardSpacingTemp = cardSpacing;
-    cardHeigthTemp = cardHeigth;
+    distanceFromBottomTemp = distanceFromBottom;
     handArchTemp = handArch;
     cardAngleTemp = cardAngle;
+  }
+
+  void defaultValues() {
+    cardSpacing = _defaultCardSpacing;
+    distanceFromBottom = _defaultDistanceFromBottom;
+    handArch = _defaultHandArch;
+    cardAngle = _defaultCardAngle;
+    cardSpacingTemp = _defaultCardSpacing;
+    distanceFromBottomTemp = _defaultDistanceFromBottom;
+    handArchTemp = _defaultHandArch;
+    cardAngleTemp = _defaultCardAngle;
   }
 
   void toggleTenthCard() {
@@ -42,5 +63,34 @@ class OptionsController {
       cards.add(card);
     }
     return cards;
+  }
+
+  Map<String, double> getCardPosition(double relativePosition) {
+    return _getCardPosition(
+      relativePosition,
+      cardSpacing,
+      handArch,
+      distanceFromBottom,
+      cardAngle
+    );
+  }
+
+  Map<String, double> getCardPositionTemp(double relativePosition) {
+    return _getCardPosition(
+      relativePosition,
+      cardSpacingTemp,
+      handArchTemp,
+      distanceFromBottomTemp,
+      cardAngleTemp
+    );
+  }
+
+  Map<String, double> _getCardPosition(double relativePosition, double spacing, double archHeight, double bottomDistance, double angle) {
+    double screenWidth = CardAnimationController.screenWidth - 70;
+    return {
+      'x': relativePosition * spacing + (screenWidth / 2),
+      'y': -pow(relativePosition * archHeight, 2) + bottomDistance,
+      'angle':  relativePosition * angle
+    };
   }
 }

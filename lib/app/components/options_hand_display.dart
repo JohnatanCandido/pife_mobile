@@ -18,19 +18,30 @@ class _OptionsHandDisplayState extends State<OptionsHandDisplay> {
     return Stack(children: _buildHand());
   }
 
-  List<CardWidget> _buildHand() {
-    List<CardWidget> cardList = [];
+  List<Positioned> _buildHand() {
+    List<Positioned> cardList = [];
     List<GameCard> cards = OptionsController.instance.getCards();
     int length = cards.length;
     for (GameCard card in cards) {
       int index = cards.indexOf(card);
       double relativePosition = index - (length - 1) / 2;
-      double x = relativePosition * OptionsController.instance.cardSpacingTemp;
-      double y = relativePosition.abs() * OptionsController.instance.handArchTemp - OptionsController.instance.cardHeigthTemp + 0.9;
-      double angle = relativePosition * OptionsController.instance.cardAngleTemp;
-      CardWidget cardWidget = CardWidget(x, y, angle, card);
-      cardList.add(cardWidget);
+      var position = OptionsController.instance.getCardPositionTemp(relativePosition);
+      CardWidget cardWidget = CardWidget(
+        position['x']!,
+        position['y']!,
+        position['angle']!,
+        card,
+      );
+      cardList.add(_buildPositioned(cardWidget));
     }
     return cardList;
+  }
+
+  Positioned _buildPositioned(CardWidget cardWidget) {
+    return Positioned(
+      left: cardWidget.x,
+      bottom: cardWidget.y,
+      child: cardWidget,
+    );
   }
 }

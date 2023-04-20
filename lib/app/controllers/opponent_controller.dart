@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
+import 'package:pife_mobile/app/controllers/pack_controller.dart';
+import 'package:pife_mobile/app/controllers/trash_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/opponent.dart';
 
@@ -7,59 +10,47 @@ import '../models/validator.dart';
 import 'game_controller.dart';
 
 class OpponentController extends ChangeNotifier {
-
-  static const String buyFromTrash = "buy from trash";
-  static const String buyFromPack = "buy from pack";
-  static const String discard = "discard";
-
-  static String? cardAnimationType;
-  static GameCard? cardToAnimate;
   
   static OpponentController instance = OpponentController();
 
-  OpponentController() {
-    _opponentsCoordinates = {
+  Opponent? get opponent => _playingIndex == -1 || _playingIndex == opponents.length ? null : opponents[_playingIndex];
+
+  final Map<int, List> _opponentsProperties = {
     1: [
-      _top
+      OpponentProperties.top
     ],
     2: [
-      _topLeft,
-      _topRight
+      OpponentProperties.topLeft,
+      OpponentProperties.topRight
     ],
     3: [
-      _top,
-      _topLeft,
-      _topRight
+      OpponentProperties.bottomLeft,
+      OpponentProperties.top,
+      OpponentProperties.bottomRight
     ],
     4: [
-      _topLeft,
-      _topRight,
-      _bottomLeft,
-      _bottomRight
+      OpponentProperties.bottomLeft,
+      OpponentProperties.topLeft,
+      OpponentProperties.topRight,
+      OpponentProperties.bottomRight
     ]
   };
-  }
-
-  final _top = OpponentProperties(0, -0.9, 0.086, horizontal: true, dir: 1, angleBias: 0);
-  final _topLeft = OpponentProperties(-0.9, -0.8, 0.1, dir: 1, angleBias: 1.5);
-  final _topRight = OpponentProperties(0.9, -0.8, 0.1, dir: -1, angleBias: -1.5, cardOrientation: -1);
-  final _bottomLeft = OpponentProperties(-0.9, 0, 0.1, dir: 1, angleBias: 1.5);
-  final _bottomRight = OpponentProperties(0.9, 0, 0.1, dir: -1, angleBias: -1.5, cardOrientation: -1);
-
-  late var _opponentsCoordinates;
 
   int numberOfOpponents = 1;
-  late List<Opponent> opponents;
+  List<Opponent> opponents = [];
   int _playingIndex = -1;
   Opponent? winner;
 
-  void initializeOpponents() {
+  void reset() {
     winner = null;
     opponents = [];
     _playingIndex = -1;
-    _clearAnimation();
+  }
+
+  void initializeOpponents() {
+    reset();
     for (int i = 0; i < numberOfOpponents; i++) {
-      opponents.add(Opponent(false));
+      opponents.add(Opponent(true, _opponentsProperties[numberOfOpponents]![i]));
     }
   }
 
@@ -73,64 +64,85 @@ class OpponentController extends ChangeNotifier {
     return 'Opponent ${opponents.indexOf(winner!) + 1}';
   }
 
-  Map<String, double> getCardPosition(Opponent opponent, int opponentIndex, GameCard card) {
+  static Map<String, double> getCardPosition(Opponent opponent, GameCard card) {
+    if (card == opponent.cardDiscarded) {
+      return TrashController.instance.getTopOfTrashDefaultPosition();
+    }
     int index = opponent.cards.indexOf(card);
     int length = opponent.cards.length;
-    double relativePosition = index - (length - 1) / 2;
-    Map<String, double> cardPosition = {};
+    return getCardPositionByIndex(opponent, index, length);
+  }
 
-    if (_isHorizontal(opponentIndex)) {
-      cardPosition['x'] = relativePosition * -0.06;
-      cardPosition['y'] = -relativePosition.abs() * 0.01 + _getDouble(opponentIndex, 'y');
-    } else {
-      cardPosition['x'] = -relativePosition.abs() * 0.01 * _getDouble(opponentIndex, 'dir') + _getDouble(opponentIndex, 'x');
-      cardPosition['y'] = relativePosition * _getDouble(opponentIndex, 'orientation') * 0.04 + _getDouble(opponentIndex, 'y');
+  static Map<String, double> getCardPositionByIndex(Opponent opponent, int index, int length) {
+    if (opponent.isHorizontal()) {
+      return CardAnimationController.getHorizontalPosition(opponent.properties, index, length);
     }
-
-    cardPosition['angle'] = relativePosition * _getDouble(opponentIndex, 'angle') + _getDouble(opponentIndex, 'angleBias');
-
-    return cardPosition;
+    return CardAnimationController.getVerticalPosition(opponent.properties, index, length);
   }
 
-  double _getDouble(int index, String value) {
-    return _opponentsCoordinates[OpponentController.instance.numberOfOpponents][index].getDouble(value);
-  }
+  // double _getXCorrection(double x, double y, double tilt) {
+  //   double originX = CardAnimationController.screenWidth / 2;
+  //   double originY = 0;
 
-  bool _isHorizontal(int index) {
-    return _opponentsCoordinates[OpponentController.instance.numberOfOpponents]![index].horizontal;
-  }
+  //   return originX + cos(_radians(tilt)) * (x - originX) - sin(_radians(tilt)) * (y - originY);
+  //   // return (x / 2 * cos(_radians(tilt))) - (y / 2 * sin(_radians(tilt)));
+  // }
+
+  // double _getYCorrection(double x, double y, double tilt) {
+  //   double originX = CardAnimationController.screenWidth / 2;
+  //   double originY = 0;
+  //   // return (x / 2 * sin(_radians(tilt))) + (y / 2 * cos(_radians(tilt)));
+  //   return originY + sin(_radians(tilt)) * (x - originX) + cos(_radians(tilt)) * (y - originY);
+  // }
+
+  // double _radians(double degrees) {
+  //   return degrees * pi / 180;
+  // }
 
   void callNextPlayer() {
     _playingIndex++;
+    opponent?.startBuy();
   }
 
-  void checkOpponentsTurn() async {
+  Future<bool> checkOpponentsTurn() async {
     if (_isOpponentsTurn()) {
-      bool boughtFromTrash = await _opponentBuy();
-      GameController.instance.updateGamePage(() {
-        OpponentController.cardAnimationType = boughtFromTrash ? OpponentController.buyFromTrash : OpponentController.buyFromPack;
-      });
+      if (opponent!.shoudBuy) {
+        _buy();
+      } else if (opponent!.bought) {
+        _finishBuyingAnimation();
+      } else if (opponent!.shouldDiscard) {
+        _discard();
+      } else if (opponent!.discarded) {
+        _finishDiscardAnimation();
+      } else {
+        return true;
+      }
     }
+    return false;
   }
 
   bool _isOpponentsTurn() {
-    return 0 <= _playingIndex
-        && _playingIndex < opponents.length
-        && !opponents[_playingIndex].playing;
+    return opponent != null;
+  }
+
+  void _buy() async {
+    bool boughtFromTrash = await _opponentBuy();
+    if (boughtFromTrash) {
+      TrashController.instance.notifyListeners();  
+    } else {
+      PackController.instance.notifyListeners();
+    }
   }
 
   Future<bool> _opponentBuy() async {
-    Opponent opponent = opponents[_playingIndex];
-    opponent.playing = true;
     return Future.delayed(
       // Duration(seconds: Random().nextInt(10) + 2),
       const Duration(seconds: 2),
       () {
         GameCard? topOfTrash = GameController.instance.table.topOfTrash();
-        bool buyFromTrash = topOfTrash != null && opponent.checkBuyFromTrash(topOfTrash);
+        bool buyFromTrash = topOfTrash != null && opponent!.checkBuyFromTrash(topOfTrash);
 
-        GameController.instance.table.buy(opponent, buyFromTrash);
-        cardToAnimate = opponent.boughtCard;
+        GameController.instance.table.buy(opponent!, buyFromTrash);
         print('Opponent bought from ${buyFromTrash ? 'trash' : 'pack'}');
     
         return buyFromTrash;
@@ -138,9 +150,39 @@ class OpponentController extends ChangeNotifier {
     );
   }
 
-  Future<bool> opponentDiscard() async {
-    Opponent opponent = opponents[_playingIndex];
-    if (await _checkOpponentWon(opponent)) {
+  void onBuyAnimationEnd() {
+    if (opponent!.buying) {
+      opponent!.finishBuy();
+      notifyListeners();
+    }
+  }
+
+  void _finishBuyingAnimation() {
+    GameController.instance.table.finishOpponentBuy(opponent!);
+    opponent!.startDiscard();
+    TrashController.instance.notifyListeners();
+    PackController.instance.notifyListeners();
+    notifyListeners();
+  }
+
+  void _discard() async {
+    bool opponentWon = await _opponentDiscard();
+    if (opponentWon) {
+      GameController.instance.notifyListeners();
+    } else {
+      notifyListeners();
+    }
+  }
+
+  void onDiscardAnimationEnd() {
+    if (opponent!.discarding) {
+      opponent!.finishDiscard();
+      notifyListeners();
+    }
+  }
+
+  Future<bool> _opponentDiscard() async {
+    if (await _checkOpponentWon(opponent!)) {
       return true;
     }
 
@@ -148,15 +190,27 @@ class OpponentController extends ChangeNotifier {
       // Duration(seconds: Random().nextInt(5) + 5),
       const Duration(seconds: 1),
       () {
-        GameCard cardToDiscard = opponent.chooseCardToDiscard();
-        GameController.instance.table.discard(opponent, cardToDiscard);
-        cardToAnimate = cardToDiscard;
-        print('Opponent discarded');
-        opponent.organizeCards();
+        GameCard cardToDiscard = opponent!.chooseCardToDiscard();
+        GameController.instance.table.discard(opponent!, cardToDiscard);
+        print('Opponent discarded $cardToDiscard');
+        opponent!.organizeCards();
 
         return false;
       }
     );
+  }
+
+  void _finishDiscardAnimation() {
+    opponent!.finish();
+    GameController.instance.table.finishOpponentDiscard(opponent!);
+    callNextPlayer();
+    if (_playingIndex == opponents.length) {
+      _playingIndex = -1;
+      GameController.instance.blockActions = false;
+    }
+    TrashController.instance.notifyListeners();
+    PackController.instance.notifyListeners();
+    notifyListeners();
   }
 
   Future<bool> _checkOpponentWon(Opponent opponent) async {
@@ -165,77 +219,16 @@ class OpponentController extends ChangeNotifier {
       const Duration(seconds: 1),
       () {
         if (validateHand(opponent.cards)) {
+          opponent.organizeCards();
+          opponent.cards.removeLast();
+          opponent.finish();
           winner = opponent;
           opponent.showHand = true;
-          _clearAnimation();
+          _playingIndex = -1;
           return true;
         }
         return false;
       }
     );
-  }
-
-  static Map<String, double> getAnimatedCardInitialPosition() {
-    if (cardAnimationType == null) {
-      return {'x': 0, 'y': 0};
-    }
-    if (cardAnimationType! == buyFromPack) {
-      return {
-        'x': -0.07,
-        'y': 0,
-        'angle': 0
-      };
-    }
-    if (cardAnimationType! == buyFromTrash) {
-      return {
-        'x': 0.07,
-        'y': 0,
-        'angle': 0
-      };
-    }
-    // TODO: Get initial discard position
-    return {
-        'x': 0,
-        'y': -0.5,
-        'angle': 0
-      };
-  }
-
-  static Map<String, double> getAnimatedCardFinalPosition() {
-    if (cardAnimationType! == discard) {
-      return {
-        'x': 0.07,
-        'y': 0,
-        'angle': 0
-      };
-    }
-    return {
-        'x': 0,
-        'y': -0.5,
-        'angle': 0
-      };
-  }
-
-  void finishBuyingAnimation() {
-    Opponent playing = opponents[_playingIndex];
-    playing.add(playing.boughtCard!);
-    playing.boughtCard = null;
-    _clearAnimation();
-  }
-
-  void finishDiscardAnimation() {
-    opponents[_playingIndex].playing = false;
-    GameController.instance.table.finishOpponentDiscard(opponents[_playingIndex]);
-    _clearAnimation();
-    callNextPlayer();
-     if (_playingIndex == opponents.length) {
-      _playingIndex = -1;
-      GameController.instance.blockActions = false;
-    }
-  }
-
-  void _clearAnimation() {
-    cardAnimationType = null;
-    cardToAnimate = null;
   }
 }

@@ -1,4 +1,4 @@
-class GameCard {
+class GameCard implements Comparable {
 
   static const String hearts = 'copas';
   static const String clubs = 'paus';
@@ -22,5 +22,13 @@ class GameCard {
   @override
   String toString() {
     return '$value - $suit';
+  }
+
+  @override
+  int compareTo(other) {
+    if (other is GameCard) {
+      return cardId.compareTo((other).cardId);
+    }
+    throw UnsupportedError('Cannot compare $runtimeType to ${other.runtimeType}');
   }
 }

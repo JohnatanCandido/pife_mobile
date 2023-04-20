@@ -2,17 +2,32 @@ import 'dart:math';
 
 import 'package:pife_mobile/app/models/base_player.dart';
 import 'package:pife_mobile/app/models/card.dart';
+import 'package:pife_mobile/app/models/opponent_display_properties.dart';
 import 'package:pife_mobile/app/models/validator.dart';
 
 class Opponent extends BasePlayer {
 
+  Opponent(super.showHand, this.properties);
+
+  static const _idle = 'idle';
+  static const _buying = 'buying';
+  static const _bought = 'bought';
+  static const _discarding = 'discarding';
+  static const _discarded = 'discarded';
+
+  bool get buying => state == _buying;
+  bool get shoudBuy => buying && boughtCard == null;
+  bool get bought => state == _bought;
+  bool get discarding => state == _discarding;
+  bool get shouldDiscard => discarding && cardDiscarded == null;
+  bool get discarded => state == _discarded;
+
   GameCard? boughtCard;
   GameCard? cardDiscarded;
-  bool playing = false;
+  String state = _idle;
   Set<GameCard> cardsInSets = {};
   Set<GameCard> cardsInPairs = {};
-
-  Opponent(super.showHand);
+  OpponentProperties properties;
 
   bool checkBuyFromTrash(GameCard trash) {
     List<GameCard> hypotheticalHand = cards + [trash];
@@ -63,7 +78,35 @@ class Opponent extends BasePlayer {
     List<GameCard> usedCards = [...cardsInSets, ...cardsInPairs];
     List<GameCard> unusedCards = List.from(cards);
     unusedCards.removeWhere((card) => usedCards.contains(card));
-    unusedCards.sort((a, b) => a.cardId.compareTo(b.cardId));
+    unusedCards.sort();
     cards = usedCards + unusedCards;
-   }
+  }
+
+  double getProperty(String property) {
+    return properties.getDouble(property);
+  }
+
+  bool isHorizontal() {
+    return properties.horizontal;
+  }
+
+  void startBuy() {
+    state = _buying;
+  }
+
+  void finishBuy() {
+    state = _bought;
+  }
+
+  void startDiscard() {
+    state = _discarding;
+  }
+
+  void finishDiscard() {
+    state = _discarded;
+  }
+
+  void finish() {
+    state = _idle;
+  }
 }

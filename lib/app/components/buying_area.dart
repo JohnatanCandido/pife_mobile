@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
+import 'package:pife_mobile/app/controllers/player_hand_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 
 import '../controllers/options_controller.dart';
@@ -14,37 +16,48 @@ class BuyingArea extends StatefulWidget {
 class _BuyingAreaState extends State<BuyingArea> {
 
   @override
+  void initState() {
+    super.initState();
+    PlayerHandController.instance.addListener(_setStateMethod);
+  }
+
+  void _setStateMethod() {
+    setState(() {});
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void dispose() {
+    PlayerHandController.instance.removeListener(_setStateMethod);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (GameController.instance.buying && GameController.instance.showBuyingArea) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            height: 275,
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            // margin: EdgeInsets.only(top: _getMarginBottomBuyingArea(context)),
+    if (GameController.instance.buying && PlayerHandController.instance.showBuyingArea) {
+      return Positioned(
+        left: 1,
+        bottom: OptionsController.instance.getCardPosition(0)['y']!-100,
+        child: SizedBox(
+            height: 230,
+            width: CardAnimationController.screenWidth,
             child: DragTarget<GameCard>(
               builder:(context, candidateData, rejectedData) {
                 return Container(color: Colors.yellow.withOpacity(0.2),);
               },
               onAccept: (GameCard card) {
-                GameController.instance.updateGamePage(() {
-                  GameController.instance.buy(card);
-                });
+                  PlayerHandController.instance.buy(card);
               },
             ),
-          ),
-        ],
+        ),
       );
     }
     return Container();
-  }
-
-  double _getMarginBottomBuyingArea(BuildContext context) {
-    int length = GameController.instance.player.cards.length;
-    double relativePosition = (length - 1) / 2;
-    double percent = relativePosition * OptionsController.instance.handArch - OptionsController.instance.cardHeigth + 1;
-    print(percent);
-    return percent * MediaQuery.of(context).size.height / 100;
   }
 }

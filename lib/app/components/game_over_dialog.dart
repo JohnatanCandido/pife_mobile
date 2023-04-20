@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/card_widget.dart';
+import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/opponent_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
+import 'package:pife_mobile/app/models/opponent.dart';
 
 class GameOverDialog extends StatelessWidget {
   const GameOverDialog({super.key});
@@ -26,9 +28,7 @@ class GameOverDialog extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                GameController.instance.updateGamePage(() {
-                  GameController.instance.newGame();  
-                });
+                GameController.instance.newGame();
                 Navigator.of(context).pop();
               },
               child: const Text('Play Again')
@@ -43,31 +43,31 @@ class GameOverDialog extends StatelessWidget {
     if (GameController.instance.won) {
       return const Center(child: Text('You won this match! Do you want to play again?'));
     }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('The winner is ${OpponentController.instance.getWinnerName()}!'),
-        Padding(
-          padding: const EdgeInsets.only(top: 90, bottom: 30),
-          child: Stack(children: _buildWinnerHand(),),
-        )
-      ],
+    return SizedBox(
+      width: CardAnimationController.screenWidth,
+      height: 250,
+      child: Stack(children: _buildWinnerHand(),)
     );
   }
 
-  List<CardWidget> _buildWinnerHand() {
-    List<CardWidget> cards = [];
-    List<GameCard> winnerCards = OpponentController.instance.winner!.cards;
-    for (GameCard card in winnerCards) {
-      int index = winnerCards.indexOf(card);
-      int length = winnerCards.length;
-      double relativePosition = index - (length - 1) / 2;
-      double x = relativePosition * 0.15;
-      double y = relativePosition.abs() * 0.02 + 0.9;
-      double angle = relativePosition * 0.15;
-      CardWidget cardWidget = CardWidget(x, y, angle, card);
-      cards.add(cardWidget);
-    }
-    return cards;
+  List<Widget> _buildWinnerHand() {
+    List<Widget> objects = [];
+    objects.add(Text('The winner is ${OpponentController.instance.getWinnerName()}!'));
+
+    Opponent winner = OpponentController.instance.winner!;
+    for (GameCard card in winner.cards) {
+      var cardPosition = CardAnimationController.getGameOverHandPosition(winner.cards.indexOf(card), winner.cards.length);
+      CardWidget cardWidget = CardWidget(cardPosition['x']!, cardPosition['y']!, cardPosition['angle']!, card);
+      objects.add(_buildPositioned(cardWidget));
+    } 
+    return objects;
+  }
+
+  Positioned _buildPositioned(CardWidget cardWidget) {
+    return Positioned(
+      left: cardWidget.x,
+      bottom: cardWidget.y,
+      child: cardWidget,
+    );
   }
 }

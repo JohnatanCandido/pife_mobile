@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pife_mobile/app/components/animations/buy_discard_animation.dart';
 import 'package:pife_mobile/app/components/buying_area.dart';
 import 'package:pife_mobile/app/components/game_app_bar.dart';
 import 'package:pife_mobile/app/components/opponents_hand.dart';
 import 'package:pife_mobile/app/components/player_hand.dart';
-import 'package:pife_mobile/app/components/table/table_center.dart';
+import 'package:pife_mobile/app/components/table/pack.dart';
+import 'package:pife_mobile/app/components/table/trash.dart';
+import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
+import 'package:pife_mobile/app/controllers/opponent_controller.dart';
+import 'package:pife_mobile/app/controllers/options_controller.dart';
 
 import '../components/game_over_dialog.dart';
 
@@ -19,14 +22,37 @@ class GamePage extends StatefulWidget {
 class _GamePageState extends State<GamePage> {
 
   _GamePageState() {
-    GameController.instance.updateGamePage = updateGamePage;
     GameController.instance.newGame();
   }
 
-  void updateGamePage(Function function) {
+  @override
+  void initState() {
+    super.initState();
+    GameController.instance.addListener(_setStateMethod);
+    OptionsController.instance.addListener(_setStateMethod);
+  }
+
+  void _setStateMethod() {
     setState(() {
-      function();
+      if (OpponentController.instance.winner != null) {
+        _showGameOverDialog();
+      }
     });
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void dispose() {
+    GameController.instance.removeListener(_setStateMethod);
+    OptionsController.instance.removeListener(_setStateMethod);
+    OpponentController.instance.reset();
+    super.dispose();
   }
 
   @override
@@ -38,14 +64,14 @@ class _GamePageState extends State<GamePage> {
         body: Stack(
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height,
+              height: CardAnimationController.screenHeight,
               child: Stack(
                 children: [
+                  Pack(),
+                  Trash(),
                   OpponentsHand(),
-                  TableCenter(),
                   PlayerHand(),
                   BuyingArea(),
-                  BuyDiscardAnimation(),
                 ]
               ),
             ),

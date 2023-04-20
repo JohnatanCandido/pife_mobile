@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/player_quantity_menu.dart';
 
+import '../controllers/card_animation_controller.dart';
 import '../controllers/opponent_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +23,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    CardAnimationController.screenWidth = MediaQuery.of(context).size.width;
+    CardAnimationController.screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.green[800],
       body: Container(

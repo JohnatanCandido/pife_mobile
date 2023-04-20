@@ -4,6 +4,9 @@ import 'package:pife_mobile/app/models/card.dart';
 class CardWidget extends StatelessWidget {
   const CardWidget(this.x, this.y, this.angle, this.card, {super.key, this.isBeingCarried=false, this.showCard=true, this.cardScale=1.5});
 
+  static const double imgWidth = 71;
+  static const double imgHeight = 96;
+
   final double x;
   final double y;
   final double angle;
@@ -14,23 +17,35 @@ class CardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isBeingCarried) {
-      return Container();
-    }
-    return Container(
-      alignment: Alignment(x, y),
+    return Transform.scale(
+      scale: cardScale,
       child: Transform.rotate(
         angle: angle,
-        child: getImage()
-      )
+        child: getImage(),
+      ),
     );
   }
 
-  Transform getImage() {
-    String imgPath = showCard ? card.imgPath : 'assets/img_cartas/fundo_carta.png';
+  Widget getScaledImage() {
     return Transform.scale(
       scale: cardScale,
-      child: Image(image: AssetImage(imgPath))
+      child: getImage(),
     );
+  }
+
+  Widget getImage() {
+    if (isBeingCarried) {
+      return Container();
+    }
+    String imgPath = showCard ? card.imgPath : 'assets/img_cartas/fundo_carta.png';
+    return Image(image: AssetImage(imgPath));
+  }
+
+  double getWidth() {
+    return imgWidth * cardScale;
+  }
+
+  double getHeight() {
+    return imgHeight * cardScale;
   }
 }

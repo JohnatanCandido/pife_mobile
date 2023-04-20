@@ -49,11 +49,7 @@ class _GameAppBarState extends State<GameAppBar> {
 
   TextButton _newGameButton(BuildContext context) {
     return TextButton(
-      onPressed: () {
-        GameController.instance.updateGamePage(() {
-          GameController.instance.newGame();  
-        });
-      },
+      onPressed: GameController.instance.newGame,
       child: const Text('Novo Jogo')
     );
   }

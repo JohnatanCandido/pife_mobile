@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/opponent.dart';
+import 'package:pife_mobile/app/models/opponent_display_properties.dart';
 
 void main() {
   test('', () => shouldBuyFromTrash());
@@ -24,7 +25,7 @@ void shouldBuyFromTrash() {
 
   GameCard trash = GameCard.get('1', GameCard.diamonds);
 
-  Opponent opponent = Opponent(false);
+  Opponent opponent = Opponent(false, OpponentProperties.top);
   opponent.cards = hand;
 
   expect(opponent.checkBuyFromTrash(trash), true);
@@ -45,7 +46,7 @@ void shouldNotBuyFromTrash() {
 
   GameCard trash = GameCard.get('11', GameCard.clubs);
 
-  Opponent opponent = Opponent(false);
+  Opponent opponent = Opponent(false, OpponentProperties.top);
   opponent.cards = hand;
 
   expect(opponent.checkBuyFromTrash(trash), false);
@@ -119,7 +120,7 @@ void testDiscardLogic() {
 
 void checkDiscardLogic(List<GameCard> hand, List<GameCard> validCardsToDiscard) {
   hand.shuffle();
-  Opponent opponent = Opponent(false);
+  Opponent opponent = Opponent(false, OpponentProperties.top);
   opponent.cards = hand;
   opponent.organizeCards();
   GameCard chosenDiscard = opponent.chooseCardToDiscard();
@@ -187,7 +188,7 @@ void testCardOrganization() {
 void checkCardOrganization(List<GameCard> hand, int cardsInSets, int cardsInPairs) {
   hand.shuffle();
 
-  Opponent opponent = Opponent(false);
+  Opponent opponent = Opponent(false, OpponentProperties.top);
   opponent.cards = hand;
   opponent.organizeCards();
   expect(opponent.cardsInSets.length, cardsInSets);

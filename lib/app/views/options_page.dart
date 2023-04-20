@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/game_app_bar.dart';
 import 'package:pife_mobile/app/components/options_hand_display.dart';
-import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/options_controller.dart';
 
 class OptionsPage extends StatefulWidget {
@@ -23,7 +22,7 @@ class _OptionsPageState extends State<OptionsPage> {
         child: Stack(
           children: [
             Container(
-              padding: const EdgeInsets.only(top: 70, left: 30, right: 30),
+              padding: const EdgeInsets.only(top: 20, left: 30, right: 30),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,7 +30,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   const Text('Card Spacing:'),
                   Slider(
                     value: OptionsController.instance.cardSpacingTemp,
-                    max: 0.20,
+                    max: 30,
                     onChanged: (value) => {
                       setState(() {
                         OptionsController.instance.cardSpacingTemp = value;
@@ -39,17 +38,18 @@ class _OptionsPageState extends State<OptionsPage> {
                   }),
                   const Text('Heigth:'),
                   Slider(
-                    value: OptionsController.instance.cardHeigthTemp,
-                    max: 0.5,
+                    value: OptionsController.instance.distanceFromBottomTemp,
+                    max: 170,
+                    min: 25,
                     onChanged: (value) => {
                       setState(() {
-                        OptionsController.instance.cardHeigthTemp = value;
+                        OptionsController.instance.distanceFromBottomTemp = value;
                       })
                   }),
                   const Text('Hand Arch:'),
                   Slider(
                     value: OptionsController.instance.handArchTemp,
-                    max: 0.15,
+                    max: 2,
                     onChanged: (value) => {
                       setState(() {
                         OptionsController.instance.handArchTemp = value;
@@ -63,7 +63,8 @@ class _OptionsPageState extends State<OptionsPage> {
                       setState(() {
                         OptionsController.instance.cardAngleTemp = value;
                       })
-                  }),
+                    }
+                  ),
                   Row(
                     children: [
                       const Text('10 Cards'),
@@ -78,12 +79,7 @@ class _OptionsPageState extends State<OptionsPage> {
                     ],
                   ),
                   ElevatedButton(
-                    onPressed: () => {
-                      GameController.instance.updateGamePage(() {
-                        OptionsController.instance.applyChanges();
-                        Navigator.of(context).pop();
-                      })
-                    },
+                    onPressed: _applyChanges,
                     child: const Text('Apply')
                   ),
                   ElevatedButton(
@@ -95,16 +91,26 @@ class _OptionsPageState extends State<OptionsPage> {
                     },
                     child: const Text('Cancel')
                   ),
+                  ElevatedButton(
+                    onPressed: () => {
+                      setState(() {
+                        OptionsController.instance.defaultValues();
+                      })
+                    },
+                    child: const Text('Default')
+                  ),
                 ],
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: OptionsHandDisplay()
-            )
+            OptionsHandDisplay()
           ],
         )
       ),
     );
+  }
+
+  void _applyChanges() {
+    OptionsController.instance.applyChanges();
+    Navigator.of(context).pop();
   }
 }
