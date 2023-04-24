@@ -5,6 +5,7 @@ import 'package:pife_mobile/app/components/opponents_hand.dart';
 import 'package:pife_mobile/app/components/player_hand.dart';
 import 'package:pife_mobile/app/components/table/pack.dart';
 import 'package:pife_mobile/app/components/table/trash.dart';
+import 'package:pife_mobile/app/components/turn_marker.dart';
 import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/opponent_controller.dart';
@@ -72,6 +73,7 @@ class _GamePageState extends State<GamePage> {
                   OpponentsHand(),
                   PlayerHand(),
                   BuyingArea(),
+                  TurnMarker(),
                 ]
               ),
             ),

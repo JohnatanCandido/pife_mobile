@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/pack_controller.dart';
 import 'package:pife_mobile/app/controllers/trash_controller.dart';
+import 'package:pife_mobile/app/controllers/turn_marker_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/opponent.dart';
 
@@ -208,6 +209,7 @@ class OpponentController extends ChangeNotifier {
       _playingIndex = -1;
       GameController.instance.blockActions = false;
     }
+    TurnMarkerController.instance.notifyListeners();
     TrashController.instance.notifyListeners();
     PackController.instance.notifyListeners();
     notifyListeners();

@@ -3,7 +3,6 @@ import 'package:pife_mobile/app/components/card_widget.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/player_hand_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
-import 'package:pife_mobile/app/controllers/options_controller.dart';
 
 class PlayerHand extends StatefulWidget {
   const PlayerHand({super.key});
@@ -41,11 +40,7 @@ class _PlayerHandState extends State<PlayerHand> {
   Widget build(BuildContext context) {
     List<Positioned> cards = [];
     for (GameCard card in GameController.instance.player.cards) {
-      int index = GameController.instance.player.cards.indexOf(card);
-      int length = GameController.instance.player.cards.length;
-      double relativePosition = index - (length - 1) / 2;
-
-      var position = OptionsController.instance.getCardPosition(relativePosition);
+      var position = GameController.instance.getCardPosition(card);
       CardWidget cardWidget = CardWidget(
         position['x']!,
         position['y']!,

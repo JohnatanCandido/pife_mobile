@@ -39,22 +39,4 @@ class OpponentProperties {
   final double tilt;
   final bool horizontal;
 
-  double getDouble(String value) {
-    if (value == 'x') {
-      return leftMargin;
-    }
-    if (value == 'y') {
-      return topMargin;
-    }
-    if (value == 'dir') {
-      return dir;
-    }
-    if (value == 'angleBias') {
-      return angleBias;
-    }
-    if (value == 'orientation') {
-      return cardOrientation;
-    }
-    return 0;
-  }
 }

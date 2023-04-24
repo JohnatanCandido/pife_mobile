@@ -82,10 +82,6 @@ class Opponent extends BasePlayer {
     cards = usedCards + unusedCards;
   }
 
-  double getProperty(String property) {
-    return properties.getDouble(property);
-  }
-
   bool isHorizontal() {
     return properties.horizontal;
   }
