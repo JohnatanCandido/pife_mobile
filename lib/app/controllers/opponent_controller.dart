@@ -51,7 +51,11 @@ class OpponentController extends ChangeNotifier {
   void initializeOpponents() {
     reset();
     for (int i = 0; i < numberOfOpponents; i++) {
-      opponents.add(Opponent(true, _opponentsProperties[numberOfOpponents]![i]));
+      opponents.add(Opponent(false, _opponentsProperties[numberOfOpponents]![i]));
+    }
+    if (numberOfOpponents == 4) {
+      opponents[1].tiltStyle = OpponentProperties.tiltLeftToRight;
+      opponents[2].tiltStyle = OpponentProperties.tiltRightToLeft;
     }
   }
 
@@ -76,29 +80,10 @@ class OpponentController extends ChangeNotifier {
 
   static Map<String, double> getCardPositionByIndex(Opponent opponent, int index, int length) {
     if (opponent.isHorizontal()) {
-      return CardAnimationController.getHorizontalPosition(opponent.properties, index, length);
+      return CardAnimationController.getHorizontalPosition(opponent, index, length);
     }
     return CardAnimationController.getVerticalPosition(opponent.properties, index, length);
   }
-
-  // double _getXCorrection(double x, double y, double tilt) {
-  //   double originX = CardAnimationController.screenWidth / 2;
-  //   double originY = 0;
-
-  //   return originX + cos(_radians(tilt)) * (x - originX) - sin(_radians(tilt)) * (y - originY);
-  //   // return (x / 2 * cos(_radians(tilt))) - (y / 2 * sin(_radians(tilt)));
-  // }
-
-  // double _getYCorrection(double x, double y, double tilt) {
-  //   double originX = CardAnimationController.screenWidth / 2;
-  //   double originY = 0;
-  //   // return (x / 2 * sin(_radians(tilt))) + (y / 2 * cos(_radians(tilt)));
-  //   return originY + sin(_radians(tilt)) * (x - originX) + cos(_radians(tilt)) * (y - originY);
-  // }
-
-  // double _radians(double degrees) {
-  //   return degrees * pi / 180;
-  // }
 
   void callNextPlayer() {
     _playingIndex++;

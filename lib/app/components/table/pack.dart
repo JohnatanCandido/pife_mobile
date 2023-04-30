@@ -75,7 +75,7 @@ class _PackState extends State<Pack> {
   }
 
   CardWidget _getTopOfPack() {
-    return CardWidget(0.5, 0.9, 0, GameController.instance.table.getTopOfPack(), cardScale: 1,);
+    return CardWidget(0.5, 0.9, 0, GameController.instance.table.getTopOfPack(), cardScale: 1, showCard: false,);
   }
 
   Widget _buildPackBuying() {
@@ -100,7 +100,7 @@ class _PackState extends State<Pack> {
     if (card == null) {
       return _getEmptyPackMarking();
     }
-    return CardWidget(0.5, 0.9, 0, card, cardScale: 1,);
+    return CardWidget(0.5, 0.9, 0, card, cardScale: 1, showCard: false,);
   }
 
   Container _getEmptyPackMarking() {

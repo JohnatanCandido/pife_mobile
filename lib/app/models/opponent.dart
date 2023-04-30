@@ -28,6 +28,7 @@ class Opponent extends BasePlayer {
   Set<GameCard> cardsInSets = {};
   Set<GameCard> cardsInPairs = {};
   OpponentProperties properties;
+  String? tiltStyle;
 
   bool checkBuyFromTrash(GameCard trash) {
     List<GameCard> hypotheticalHand = cards + [trash];

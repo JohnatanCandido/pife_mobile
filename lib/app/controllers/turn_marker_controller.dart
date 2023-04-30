@@ -33,7 +33,7 @@ class TurnMarkerController extends ChangeNotifier {
     Map<String, double> position;
 
     if (opponent.isHorizontal()) {
-      position = CardAnimationController.getHorizontalPosition(opponent.properties, 5, 9);
+      position = CardAnimationController.getHorizontalPosition(opponent, 5, 9);
     } else {
       position = CardAnimationController.getVerticalPosition(opponent.properties, 5, 9);
     }

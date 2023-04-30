@@ -2,7 +2,10 @@ import '../controllers/card_animation_controller.dart';
 
 class OpponentProperties {
 
-  const OpponentProperties({required this.leftMargin, required this.topMargin, this.horizontal=true, this.dir=-1, this.angleBias=0, this.cardOrientation=1, this.tilt=0});
+  OpponentProperties({required this.leftMargin, required this.topMargin, this.horizontal=true, this.dir=-1, this.angleBias=0, this.cardOrientation=1});
+
+  static const String tiltLeftToRight = 'LtR';
+  static const String tiltRightToLeft = 'RtL';
 
   static final top = OpponentProperties(
     leftMargin: CardAnimationController.screenWidth * 0.4,
@@ -36,7 +39,6 @@ class OpponentProperties {
   final double dir;
   final double angleBias;
   final double cardOrientation;
-  final double tilt;
   final bool horizontal;
 
 }
