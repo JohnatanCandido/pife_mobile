@@ -65,8 +65,8 @@ class OpponentController extends ChangeNotifier {
     }
   }
 
-  String getWinnerName() {
-    return 'Opponent ${opponents.indexOf(winner!) + 1}';
+  int getWinnerNumber() {
+    return opponents.indexOf(winner!) + 1;
   }
 
   static Map<String, double> getCardPosition(Opponent opponent, GameCard card) {

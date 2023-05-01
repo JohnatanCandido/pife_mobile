@@ -8,6 +8,8 @@ import 'package:pife_mobile/app/models/card.dart';
 import '../../controllers/card_animation_controller.dart';
 import '../../controllers/trash_controller.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class Trash extends StatefulWidget {
   const Trash({super.key});
 
@@ -131,8 +133,8 @@ class TrashState extends State<Trash> {
       color: Colors.green[700],
       width: CardWidget.imgWidth,
       height: CardWidget.imgHeight,
-      child: const Center(
-        child: Text('Trash'),
+      child: Center(
+        child: Text(AppLocalizations.of(context)!.trash),
       ),
     );
   }

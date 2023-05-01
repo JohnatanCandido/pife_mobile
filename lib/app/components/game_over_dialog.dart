@@ -6,32 +6,35 @@ import 'package:pife_mobile/app/controllers/opponent_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/opponent.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class GameOverDialog extends StatelessWidget {
   const GameOverDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String dialogTitle = GameController.instance.won ? AppLocalizations.of(context)!.youWin : AppLocalizations.of(context)!.youLose;
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AlertDialog(
-          title: Text(GameController.instance.won ? 'You win!' : 'You Lose'),
-          content: _buildGameOverDialogContent(),
+          title: Text(dialogTitle),
+          content: _buildGameOverDialogContent(context),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pushReplacementNamed('/');
               },
-              child: const Text('Title Screen')
+              child: Text(AppLocalizations.of(context)!.titleScreen)
             ),
             TextButton(
               onPressed: () {
                 GameController.instance.newGame();
                 Navigator.of(context).pop();
               },
-              child: const Text('Play Again')
+              child: Text(AppLocalizations.of(context)!.playAgain)
             )
           ],
         ),
@@ -39,20 +42,20 @@ class GameOverDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildGameOverDialogContent() {
+  Widget _buildGameOverDialogContent(BuildContext context) {
     if (GameController.instance.won) {
-      return const Center(child: Text('You won this match! Do you want to play again?'));
+      return Center(child: Text(AppLocalizations.of(context)!.winnerText));
     }
     return SizedBox(
       width: CardAnimationController.screenWidth,
       height: 250,
-      child: Stack(children: _buildWinnerHand(),)
+      child: Stack(children: _buildWinnerHand(context),)
     );
   }
 
-  List<Widget> _buildWinnerHand() {
+  List<Widget> _buildWinnerHand(BuildContext context) {
     List<Widget> objects = [];
-    objects.add(Text('The winner is ${OpponentController.instance.getWinnerName()}!'));
+    objects.add(Text(AppLocalizations.of(context)!.loserText(OpponentController.instance.getWinnerNumber())));
 
     Opponent winner = OpponentController.instance.winner!;
     for (GameCard card in winner.cards) {

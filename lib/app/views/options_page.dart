@@ -3,6 +3,8 @@ import 'package:pife_mobile/app/components/game_app_bar.dart';
 import 'package:pife_mobile/app/components/options_hand_display.dart';
 import 'package:pife_mobile/app/controllers/options_controller.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class OptionsPage extends StatefulWidget {
   const OptionsPage({super.key});
 
@@ -27,7 +29,7 @@ class _OptionsPageState extends State<OptionsPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Card Spacing:'),
+                  Text(AppLocalizations.of(context)!.cardSpacing),
                   Slider(
                     value: OptionsController.instance.cardSpacingTemp,
                     max: 30,
@@ -36,7 +38,7 @@ class _OptionsPageState extends State<OptionsPage> {
                         OptionsController.instance.cardSpacingTemp = value;
                       })
                   }),
-                  const Text('Heigth:'),
+                  Text(AppLocalizations.of(context)!.heigth),
                   Slider(
                     value: OptionsController.instance.distanceFromBottomTemp,
                     max: 170,
@@ -46,7 +48,7 @@ class _OptionsPageState extends State<OptionsPage> {
                         OptionsController.instance.distanceFromBottomTemp = value;
                       })
                   }),
-                  const Text('Hand Arch:'),
+                  Text(AppLocalizations.of(context)!.archHeigth),
                   Slider(
                     value: OptionsController.instance.handArchTemp,
                     max: 2,
@@ -55,7 +57,7 @@ class _OptionsPageState extends State<OptionsPage> {
                         OptionsController.instance.handArchTemp = value;
                       })
                   }),
-                  const Text('Card Angle:'),
+                  Text(AppLocalizations.of(context)!.cardAngle),
                   Slider(
                     value: OptionsController.instance.cardAngleTemp,
                     max: 0.35,
@@ -67,7 +69,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   ),
                   Row(
                     children: [
-                      const Text('10 Cards'),
+                      Text(AppLocalizations.of(context)!.tenCards),
                       Checkbox(
                         value: OptionsController.instance.tenthCard,
                         onChanged: (value) => {
@@ -80,7 +82,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   ),
                   ElevatedButton(
                     onPressed: _applyChanges,
-                    child: const Text('Apply')
+                    child: Text(AppLocalizations.of(context)!.apply)
                   ),
                   ElevatedButton(
                     onPressed: () => {
@@ -89,7 +91,7 @@ class _OptionsPageState extends State<OptionsPage> {
                         Navigator.of(context).pop();
                       })
                     },
-                    child: const Text('Cancel')
+                    child: Text(AppLocalizations.of(context)!.cancel)
                   ),
                   ElevatedButton(
                     onPressed: () => {
@@ -97,7 +99,7 @@ class _OptionsPageState extends State<OptionsPage> {
                         OptionsController.instance.defaultValues();
                       })
                     },
-                    child: const Text('Default')
+                    child: Text(AppLocalizations.of(context)!.optionsDefaultValues)
                   ),
                 ],
               ),

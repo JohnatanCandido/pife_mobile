@@ -1,0 +1,38 @@
+{
+    "title": "Pife Mobile",
+    "play": "Jogar",
+    "options": "Opções",
+    "opponentNumber": "{count, plural, =1{1 Oponente} other{{count} Oponentes}}",
+    "@opponentNumber": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "compact"
+            }
+        }
+    },
+    "cardSpacing": "Espaçamento das cartas",
+    "heigth": "Altura",
+    "archHeigth": "Altura do arco",
+    "cardAngle": "Ângulo das cartas",
+    "tenCards": "10 Cartas",
+    "apply": "Aplicar",
+    "cancel": "Cancelar",
+    "optionsDefaultValues": "Padrão",
+    "newGame": "Novo Jogo",
+    "trash": "Lixo",
+    "youWin": "Você Ganhou!",
+    "youLose": "Você Perdeu",
+    "titleScreen": "Página Inicial",
+    "playAgain": "Jogar Novamente",
+    "winnerText": "Você ganhou esta partida! Deseja jogar novamente?",
+    "loserText": "O vencedor foi o oponente {winnerName}",
+    "@loserText": {
+        "placeholders": {
+            "winnerName": {
+                "type": "num",
+                "format": "compact"
+            }
+        }
+    }
+}

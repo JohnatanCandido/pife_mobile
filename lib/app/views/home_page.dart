@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pife_mobile/app/components/player_quantity_menu.dart';
+import 'package:pife_mobile/app/components/opponent_quantity_menu.dart';
 
 import '../controllers/card_animation_controller.dart';
 import '../controllers/opponent_controller.dart';
+
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(AppLocalizations.of(context));
     CardAnimationController.screenWidth = MediaQuery.of(context).size.width;
     CardAnimationController.screenHeight = MediaQuery.of(context).size.height;
 
@@ -35,7 +38,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              PlayerQuantityMenu(
+              OpponentQuantityMenu(
                 selectedNumber: OpponentController.instance.numberOfOpponents,
                 onChanged: setNumberOfOpponents,
               ),
@@ -43,13 +46,13 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.of(context).pushNamed('/play');
                 },
-                child: const Text('Jogar')
+                child: Text(AppLocalizations.of(context)!.play)
               ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed('/options');
                 },
-                child: const Text('Options')
+                child: Text(AppLocalizations.of(context)!.options)
               ),
             ],
           ),

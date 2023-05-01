@@ -4,6 +4,8 @@ import 'package:pife_mobile/app/views/options_page.dart';
 
 import 'app/views/home_page.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 main() {
   runApp(const AppWidget());
 }
@@ -18,10 +20,17 @@ class AppWidget extends StatelessWidget {
       theme: ThemeData.dark(),
       initialRoute: '/',
       routes: {
-        '/':(context) => HomePage(),
-        '/play':(context) => GamePage(),
+        '/': (context) => HomePage(),
+        '/play': (context) => GamePage(),
         '/options': (context) => OptionsPage()
       },
+      localizationsDelegates: const [
+        AppLocalizations.delegate
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('pt')
+      ],
     );
   }
 }
