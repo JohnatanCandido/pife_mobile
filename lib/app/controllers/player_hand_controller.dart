@@ -7,6 +7,7 @@ import 'package:pife_mobile/app/models/base_player.dart';
 import 'package:pife_mobile/app/models/card.dart';
 import 'package:pife_mobile/app/models/table.dart';
 
+import '../models/exceptions.dart';
 import 'options_controller.dart';
 
 class PlayerHandController extends ChangeNotifier {
@@ -18,6 +19,8 @@ class PlayerHandController extends ChangeNotifier {
 
   GameCard? selectedCard;
   bool showBuyingArea = false;
+
+  bool invalidDiscard = false;
 
   void selectCard(GameCard card) {
     selectedCard = card;
@@ -62,11 +65,15 @@ class PlayerHandController extends ChangeNotifier {
   }
 
   void discard(GameCard card) {
-    _table.discard(_player, card);
-    GameController.instance.onDiscard();
-    TrashController.instance.notifyListeners();
-    PackController.instance.notifyListeners();
-    OpponentController.instance.notifyListeners();
+    try {
+      _table.discard(_player, card);
+      GameController.instance.onDiscard();
+      TrashController.instance.notifyListeners();
+      PackController.instance.notifyListeners();
+      OpponentController.instance.notifyListeners();
+    } on InvalidDiscardException {
+      invalidDiscard = true;
+    }
     notifyListeners();
   }
 }

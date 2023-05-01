@@ -4,6 +4,9 @@ import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/player_hand_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 
+import 'error_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class PlayerHand extends StatefulWidget {
   const PlayerHand({super.key});
 
@@ -20,7 +23,12 @@ class _PlayerHandState extends State<PlayerHand> {
   }
 
   void _setStateMethod() {
-    setState(() {});
+    setState(() {
+      if (PlayerHandController.instance.invalidDiscard) {
+        _showGameOverDialog();
+        PlayerHandController.instance.invalidDiscard = false;
+      }
+    });
   }
 
   @override
@@ -90,6 +98,15 @@ class _PlayerHandState extends State<PlayerHand> {
         PlayerHandController.instance.organizeCards(details.localPosition.dx);
       },
       child: cardWidget.getImage(), // initial state
+    );
+  }
+
+  Future<void> _showGameOverDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return ErrorDialog(AppLocalizations.of(context)!.invalidDiscard, AppLocalizations.of(context)!.invalidDiscardText);
+      },
     );
   }
 }

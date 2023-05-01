@@ -34,5 +34,8 @@
                 "format": "compact"
             }
         }
-    }
+    },
+    "invalidDiscard": "Descarte inválido",
+    "invalidDiscardText": "Você não pode descartar uma carta que acabou de comprar do lixo.",
+    "close": "Fechar"
 }

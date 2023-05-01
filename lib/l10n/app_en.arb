@@ -34,5 +34,8 @@
                 "format": "compact"
             }
         }
-    }
+    },
+    "invalidDiscard": "Invalid Discard",
+    "invalidDiscardText": "You cannot discard the card you just bought from the trash.",
+    "close": "Close"
 }
