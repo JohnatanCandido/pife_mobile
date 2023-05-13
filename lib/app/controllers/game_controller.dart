@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/controllers/opponent_controller.dart';
 import 'package:pife_mobile/app/controllers/options_controller.dart';
+import 'package:pife_mobile/app/controllers/player_hand_controller.dart';
+import 'package:pife_mobile/app/controllers/statistics_controller.dart';
 import 'package:pife_mobile/app/controllers/turn_marker_controller.dart';
 import 'package:pife_mobile/app/models/base_player.dart';
 import 'package:pife_mobile/app/models/card.dart';
@@ -14,12 +16,14 @@ class GameController extends ChangeNotifier {
   GameTable table = GameTable();
   late BasePlayer player;
   
+  bool firstRound = false;
   late bool blockActions;
   late bool buying;
   late bool won;
 
   void newGame() {
     print('-------------- New Game --------------');
+    firstRound = true;
     player = BasePlayer(true);
     blockActions = false;
     buying = true;
@@ -34,15 +38,22 @@ class GameController extends ChangeNotifier {
   void checkWin() {
     if (validateHand(player.cards)) {
       won = true;
+      StatisticsController.instance.addWon();
       notifyListeners();
     }
   }
 
   void onDiscard() {
-    blockActions = true;
     buying = true;
-    OpponentController.instance.callNextPlayer();
-    TurnMarkerController.instance.notifyListeners();
+    if (firstRound && PlayerHandController.instance.discardedBoughtCard) {
+      PlayerHandController.instance.boughCard = null;
+      PlayerHandController.instance.discardedBoughtCard = false;
+    } else {
+      blockActions = true;
+      OpponentController.instance.callNextPlayer();
+      TurnMarkerController.instance.notifyListeners();
+    }
+    firstRound = false;
   }
 
   Map<String, double> getCardPosition(GameCard card) {

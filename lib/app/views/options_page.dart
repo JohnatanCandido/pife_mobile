@@ -13,6 +13,24 @@ class OptionsPage extends StatefulWidget {
 }
 
 class _OptionsPageState extends State<OptionsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    OptionsController.instance.addListener(_setStateMethod);
+  }
+
+  void _setStateMethod() {
+    setState(() {});
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +99,10 @@ class _OptionsPageState extends State<OptionsPage> {
                     ],
                   ),
                   ElevatedButton(
-                    onPressed: _applyChanges,
+                    onPressed: () {
+                      OptionsController.instance.applyChanges();
+                      Navigator.of(context).pop();
+                    },
                     child: Text(AppLocalizations.of(context)!.apply)
                   ),
                   ElevatedButton(
@@ -109,10 +130,5 @@ class _OptionsPageState extends State<OptionsPage> {
         )
       ),
     );
-  }
-
-  void _applyChanges() {
-    OptionsController.instance.applyChanges();
-    Navigator.of(context).pop();
   }
 }

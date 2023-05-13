@@ -50,8 +50,8 @@ class GameTable {
         throw NoCardInTrashException();
       }
     } else {
-      _checkRefillPack();
       player.add(pack.removeLast());
+      _checkRefillPack();
     }
   }
 
@@ -65,7 +65,6 @@ class GameTable {
         throw NoCardInTrashException();
       }
     } else {
-      _checkRefillPack();
       boughtCard = pack.last;
     }
     opponent.boughtCard = boughtCard;
@@ -91,6 +90,7 @@ class GameTable {
     opponent.add(opponent.boughtCard!);
     if (pack.last == opponent.boughtCard!) {
       pack.removeLast();
+      _checkRefillPack();
     } else {
       trash.removeLast();
     }
@@ -106,10 +106,8 @@ class GameTable {
 
   void _checkRefillPack() {
     if (pack.isEmpty) {
-      GameCard lastOfTrash = trash.removeLast();
       pack = List.from(trash);
       trash.clear();
-      trash.add(lastOfTrash);
     }
   }
 

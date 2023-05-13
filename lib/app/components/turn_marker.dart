@@ -35,6 +35,7 @@ class _TurnMarkerState extends State<TurnMarker> with TickerProviderStateMixin {
   @override
   void dispose() {
     TurnMarkerController.instance.removeListener(_setState);
+    _controller.dispose();
     super.dispose();
   }
 

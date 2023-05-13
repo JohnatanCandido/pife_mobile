@@ -22,6 +22,9 @@ class PlayerHandController extends ChangeNotifier {
 
   bool invalidDiscard = false;
 
+  GameCard? boughCard;
+  bool discardedBoughtCard = false;
+
   void selectCard(GameCard card) {
     selectedCard = card;
     notifyListeners();
@@ -57,6 +60,9 @@ class PlayerHandController extends ChangeNotifier {
   }
 
   void buy(GameCard card) {
+    if (GameController.instance.firstRound) {
+      boughCard = card;
+    }
     _table.buy(_player, _table.trash.contains(card));
     GameController.instance.buying = false;
     TrashController.instance.notifyListeners();
@@ -67,6 +73,9 @@ class PlayerHandController extends ChangeNotifier {
   void discard(GameCard card) {
     try {
       _table.discard(_player, card);
+      if (GameController.instance.firstRound) {
+        discardedBoughtCard = card == boughCard;
+      }
       GameController.instance.onDiscard();
       TrashController.instance.notifyListeners();
       PackController.instance.notifyListeners();

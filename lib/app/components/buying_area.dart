@@ -49,7 +49,7 @@ class _BuyingAreaState extends State<BuyingArea> {
             width: CardAnimationController.screenWidth,
             child: DragTarget<GameCard>(
               builder:(context, candidateData, rejectedData) {
-                return Container(color: Colors.yellow.withOpacity(0.2),);
+                return Container();
               },
               onAccept: (GameCard card) {
                   PlayerHandController.instance.buy(card);

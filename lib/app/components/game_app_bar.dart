@@ -24,13 +24,16 @@ class _GameAppBarState extends State<GameAppBar> {
   }
 
   Widget _getTitle() {
-    if (ModalRoute.of(context)!.settings.name == '/play') {
-      return Text(AppLocalizations.of(context)!.title);
-    }
     if (ModalRoute.of(context)!.settings.name == '/options') {
       return Text(AppLocalizations.of(context)!.options);
     }
-    return const Text("");
+    if (ModalRoute.of(context)!.settings.name == '/how-to-play') {
+      return Text(AppLocalizations.of(context)!.howToPlay);
+    }
+    if (ModalRoute.of(context)!.settings.name == '/statistics') {
+      return Text(AppLocalizations.of(context)!.statistics);
+    }
+    return Text(AppLocalizations.of(context)!.title);
   }
 
   List<Widget> _buildActions(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/pack_controller.dart';
+import 'package:pife_mobile/app/controllers/statistics_controller.dart';
 import 'package:pife_mobile/app/controllers/trash_controller.dart';
 import 'package:pife_mobile/app/controllers/turn_marker_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
@@ -206,6 +207,7 @@ class OpponentController extends ChangeNotifier {
       const Duration(seconds: 1),
       () {
         if (validateHand(opponent.cards)) {
+          StatisticsController.instance.addLost();
           opponent.organizeCards();
           opponent.cards.removeLast();
           opponent.finish();

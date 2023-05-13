@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/opponent_quantity_menu.dart';
+import 'package:pife_mobile/app/controllers/statistics_controller.dart';
 
+import '../components/game_app_bar.dart';
 import '../controllers/card_animation_controller.dart';
 import '../controllers/opponent_controller.dart';
 
@@ -15,6 +17,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  @override
+  void initState() {
+    super.initState();
+    StatisticsController.instance.addListener(_setStateMethod);
+  }
+
+  void _setStateMethod() {
+    setState(() {});
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void dispose() {
+    StatisticsController.instance.removeListener(_setStateMethod);
+    super.dispose();
+  }
+
   void setNumberOfOpponents(int? numberOfOpponents) {
     setState(() {
       if (numberOfOpponents != null) {
@@ -25,11 +50,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(AppLocalizations.of(context));
     CardAnimationController.screenWidth = MediaQuery.of(context).size.width;
     CardAnimationController.screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: const GameAppBar(),
       backgroundColor: Colors.green[800],
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -43,16 +68,23 @@ class _HomePageState extends State<HomePage> {
                 onChanged: setNumberOfOpponents,
               ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/play');
-                },
+                onPressed: () => Navigator.of(context).pushNamed('/play'),
                 child: Text(AppLocalizations.of(context)!.play)
               ),
+              const SizedBox(
+                height: 50,
+              ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/options');
-                },
-                child: Text(AppLocalizations.of(context)!.options)
+                onPressed: () => Navigator.of(context).pushNamed('/options'),
+                child: Text(AppLocalizations.of(context)!.options),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pushNamed('/how-to-play'),
+                child: Text(AppLocalizations.of(context)!.howToPlay),
+              ),
+              ElevatedButton(
+                onPressed: StatisticsController.instance.statisticsLoaded ? () => Navigator.of(context).pushNamed('/statistics') : null,
+                child: Text(AppLocalizations.of(context)!.statistics),
               ),
             ],
           ),

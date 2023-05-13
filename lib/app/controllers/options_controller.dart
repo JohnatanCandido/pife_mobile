@@ -1,12 +1,19 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class OptionsController extends ChangeNotifier {
 
   static OptionsController instance = OptionsController();
+
+  OptionsController() {
+    init();
+  }
 
   bool tenthCard = true;
 
@@ -25,11 +32,46 @@ class OptionsController extends ChangeNotifier {
   double handArchTemp = 1;
   double cardAngleTemp = 0.2;
 
+  void init() async {
+    print('Loading settings...');
+    final prefs = await SharedPreferences.getInstance();
+    String? json = prefs.getString('preferences');
+    String msg = 'No settings to load';
+    if (json != null) {
+      Map<String, dynamic> preferences = jsonDecode(json);
+      cardSpacing = preferences['cardSpacing'];
+      distanceFromBottom = preferences['distanceFromBottom'];
+      handArch = preferences['handArch'];
+      cardAngle = preferences['cardAngle'];
+      cardSpacingTemp = preferences['cardSpacing'];
+      distanceFromBottomTemp = preferences['distanceFromBottom'];
+      handArchTemp = preferences['handArch'];
+      cardAngleTemp = preferences['cardAngle'];
+      msg = 'Settings loaded';
+    }
+    print(msg);
+    notifyListeners();
+  }
+
+  void saveChanges() async {
+    print('Saving settings...');
+    Map<String, dynamic> json = {
+      'cardSpacing': cardSpacing,
+      'distanceFromBottom': distanceFromBottom,
+      'handArch': handArch,
+      'cardAngle': cardAngle
+    };
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('preferences', jsonEncode(json));
+    print('Settings saved.');
+  }
+
   void applyChanges() {
     cardSpacing = cardSpacingTemp;
     distanceFromBottom = distanceFromBottomTemp;
     handArch = handArchTemp;
     cardAngle = cardAngleTemp;
+    saveChanges();
     notifyListeners();
   }
 
@@ -41,10 +83,6 @@ class OptionsController extends ChangeNotifier {
   }
 
   void defaultValues() {
-    cardSpacing = _defaultCardSpacing;
-    distanceFromBottom = _defaultDistanceFromBottom;
-    handArch = _defaultHandArch;
-    cardAngle = _defaultCardAngle;
     cardSpacingTemp = _defaultCardSpacing;
     distanceFromBottomTemp = _defaultDistanceFromBottom;
     handArchTemp = _defaultHandArch;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/views/game_page.dart';
+import 'package:pife_mobile/app/views/how_to_play.dart';
 import 'package:pife_mobile/app/views/options_page.dart';
+import 'package:pife_mobile/app/views/statistics.dart';
 
 import 'app/views/home_page.dart';
 
@@ -22,7 +24,9 @@ class AppWidget extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/play': (context) => GamePage(),
-        '/options': (context) => OptionsPage()
+        '/options': (context) => OptionsPage(),
+        '/how-to-play': (context) => const HowToPlay(),
+        '/statistics': (context) => const Statistics(),
       },
       localizationsDelegates: const [
         AppLocalizations.delegate
