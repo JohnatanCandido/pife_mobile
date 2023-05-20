@@ -1,4 +1,4 @@
-package com.example.pife_mobile
+package com.johnatan.pife_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

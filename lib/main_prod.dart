@@ -31,7 +31,7 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: dotenv.env['ENVIRONMENT'] != 'Production',
       title: 'Pife Mobile',
       theme: ThemeData.dark(),
       initialRoute: '/',

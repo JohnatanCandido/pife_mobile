@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pife_mobile">
+    package="com.johnatan.pife_mobile">
    <application
-        android:label="pife_mobile"
+        android:label="Pife Mobile"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
