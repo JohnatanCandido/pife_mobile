@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pife_mobile/app/controllers/ad_controller.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,6 +15,14 @@ class GameAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _GameAppBarState extends State<GameAppBar> {
+
+  void _startNewGame() {
+    GameController.instance.newGame();
+  }
+
+  void _checkShowAd() {
+    AdController.instance.checkShowAd(_startNewGame);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +63,7 @@ class _GameAppBarState extends State<GameAppBar> {
 
   TextButton _newGameButton(BuildContext context) {
     return TextButton(
-      onPressed: GameController.instance.newGame,
+      onPressed: _checkShowAd,
       child: Text(AppLocalizations.of(context)!.newGame)
     );
   }

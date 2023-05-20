@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/card_widget.dart';
+import 'package:pife_mobile/app/controllers/ad_controller.dart';
 import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
 import 'package:pife_mobile/app/controllers/game_controller.dart';
 import 'package:pife_mobile/app/controllers/opponent_controller.dart';
@@ -8,8 +9,14 @@ import 'package:pife_mobile/app/models/opponent.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class GameOverDialog extends StatelessWidget {
+class GameOverDialog extends StatefulWidget {
   const GameOverDialog({super.key});
+
+  @override
+  State<GameOverDialog> createState() => _GameOverDialogState();
+}
+
+class _GameOverDialogState extends State<GameOverDialog> {
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +30,11 @@ class GameOverDialog extends StatelessWidget {
           content: _buildGameOverDialogContent(context),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacementNamed('/');
-              },
+              onPressed: () => _checkShowAd(false),
               child: Text(AppLocalizations.of(context)!.titleScreen)
             ),
             TextButton(
-              onPressed: () {
-                GameController.instance.newGame();
-                Navigator.of(context).pop();
-              },
+              onPressed: () => _checkShowAd(true),
               child: Text(AppLocalizations.of(context)!.playAgain)
             )
           ],
@@ -72,5 +73,23 @@ class GameOverDialog extends StatelessWidget {
       bottom: cardWidget.y,
       child: cardWidget,
     );
+  }
+
+  void _startNewGame() {
+    GameController.instance.newGame();
+    Navigator.of(context).pop();
+  }
+
+  void _goToTitleScreen() {
+    Navigator.of(context).pop();
+    Navigator.of(context).pushReplacementNamed('/');
+  }
+
+  void _checkShowAd(bool startNewGame) {
+    if (startNewGame) {
+      AdController.instance.checkShowAd(_startNewGame);
+    } else {
+      AdController.instance.checkShowAd(_goToTitleScreen);
+    }
   }
 }

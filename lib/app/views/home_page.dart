@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/components/opponent_quantity_menu.dart';
 import 'package:pife_mobile/app/controllers/statistics_controller.dart';
+import 'package:provider/provider.dart';
 
 import '../components/game_app_bar.dart';
+import '../controllers/ad_controller.dart';
 import '../controllers/card_animation_controller.dart';
 import '../controllers/opponent_controller.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../models/ad_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +29,13 @@ class _HomePageState extends State<HomePage> {
 
   void _setStateMethod() {
     setState(() {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final adState = Provider.of<AdState>(context);
+    AdController.instance.initialize(adState);
   }
 
   @override
@@ -68,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                 onChanged: setNumberOfOpponents,
               ),
               ElevatedButton(
-                onPressed: () => Navigator.of(context).pushNamed('/play'),
+                onPressed: _checkShowAd,
                 child: Text(AppLocalizations.of(context)!.play)
               ),
               const SizedBox(
@@ -90,5 +101,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       );
+  }
+
+  void _checkShowAd() {
+    AdController.instance.checkShowAd(_startNewGame);
+  }
+
+  void _startNewGame() {
+    Navigator.of(context).pushNamed('/play');
   }
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/controllers/opponent_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pife_mobile/app/controllers/user_data_controller.dart';
 
 import 'package:pife_mobile/app/models/player_statistic.dart';
 
@@ -22,8 +22,7 @@ class StatisticsController extends ChangeNotifier {
   void _checkRetrieveStatistics() async {
     if (_playerStatistics.isEmpty) {
       print('Loading statistics...');
-      final prefs = await SharedPreferences.getInstance();
-      List<String>? statistics = prefs.getStringList('statistics');
+      List<String>? statistics = await UserDataController.load('statistics', 'list') as List<String>?;
 
       if (statistics != null) {
         for (String data in statistics) {
@@ -39,6 +38,7 @@ class StatisticsController extends ChangeNotifier {
   }
 
   void _createStatistics() {
+    _playerStatistics.clear();
     for (String n in ['1', '2', '3', '4']) {
       _playerStatistics.add(PlayerStatistic(n));
     }
@@ -57,21 +57,13 @@ class StatisticsController extends ChangeNotifier {
   }
 
   void _save() async {
-    List<String> data = [];
-    for (PlayerStatistic statistic in _playerStatistics) {
-      data.add(jsonEncode(statistic));
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('statistics', data);
+    UserDataController.save('statistics', _playerStatistics);
     notifyListeners();
   }
 
   void resetStatistics() async {
-    _playerStatistics.clear();
     _createStatistics();
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('statistics');
+    UserDataController.remove('statistics');
     notifyListeners();
   }
 }

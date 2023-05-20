@@ -3,9 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:pife_mobile/app/controllers/card_animation_controller.dart';
+import 'package:pife_mobile/app/controllers/user_data_controller.dart';
 import 'package:pife_mobile/app/models/card.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OptionsController extends ChangeNotifier {
 
@@ -34,8 +33,7 @@ class OptionsController extends ChangeNotifier {
 
   void init() async {
     print('Loading settings...');
-    final prefs = await SharedPreferences.getInstance();
-    String? json = prefs.getString('preferences');
+    String? json = await UserDataController.load('preferences', 'string') as String?;
     String msg = 'No settings to load';
     if (json != null) {
       Map<String, dynamic> preferences = jsonDecode(json);
@@ -61,8 +59,7 @@ class OptionsController extends ChangeNotifier {
       'handArch': handArch,
       'cardAngle': cardAngle
     };
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('preferences', jsonEncode(json));
+    UserDataController.save('preferences', json);
     print('Settings saved.');
   }
 
