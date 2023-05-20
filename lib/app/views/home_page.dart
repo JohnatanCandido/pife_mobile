@@ -70,35 +70,49 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.only(left: 30, right: 30),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              OpponentQuantityMenu(
-                selectedNumber: OpponentController.instance.numberOfOpponents,
-                onChanged: setNumberOfOpponents,
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 20),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: const Image(image: AssetImage('assets/logo.png'))
+              )
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 100),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  OpponentQuantityMenu(
+                    selectedNumber: OpponentController.instance.numberOfOpponents,
+                    onChanged: setNumberOfOpponents,
+                  ),
+                  ElevatedButton(
+                    onPressed: _checkShowAd,
+                    child: Text(AppLocalizations.of(context)!.play)
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pushNamed('/options'),
+                    child: Text(AppLocalizations.of(context)!.options),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pushNamed('/how-to-play'),
+                    child: Text(AppLocalizations.of(context)!.howToPlay),
+                  ),
+                  ElevatedButton(
+                    onPressed: StatisticsController.instance.statisticsLoaded ? () => Navigator.of(context).pushNamed('/statistics') : null,
+                    child: Text(AppLocalizations.of(context)!.statistics),
+                  ),
+                ],
               ),
-              ElevatedButton(
-                onPressed: _checkShowAd,
-                child: Text(AppLocalizations.of(context)!.play)
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pushNamed('/options'),
-                child: Text(AppLocalizations.of(context)!.options),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pushNamed('/how-to-play'),
-                child: Text(AppLocalizations.of(context)!.howToPlay),
-              ),
-              ElevatedButton(
-                onPressed: StatisticsController.instance.statisticsLoaded ? () => Navigator.of(context).pushNamed('/statistics') : null,
-                child: Text(AppLocalizations.of(context)!.statistics),
-              ),
-            ],
-          ),
+            ),
+          ]
+        ),
         ),
       );
   }
