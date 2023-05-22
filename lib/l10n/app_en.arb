@@ -46,5 +46,14 @@
     "gamesPlayed": "Played",
     "gamesWon": "Won",
     "gamesLost": "Lost",
-    "resetStatistics": "Reset Statistics"
+    "resetStatistics": "Reset Statistics",
+    "roomName": "Room name",
+    "playerNumber": "Players",
+    "join": "Join",
+    "removePlayer": "Remove",
+    "createRoom": "Create room",
+    "multiplayer": "Multiplayer",
+    "nickname": "Nickname",
+    "searchRooms": "Search rooms",
+    "stopHosting": "Remove room"
 }

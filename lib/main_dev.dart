@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:pife_mobile/app/models/ad_state.dart';
 import 'package:pife_mobile/app/views/game_page.dart';
@@ -43,11 +44,15 @@ class AppWidget extends StatelessWidget {
         '/statistics': (context) => const Statistics(),
       },
       localizationsDelegates: const [
-        AppLocalizations.delegate
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: const [
         Locale('en'),
-        Locale('pt')
+        Locale('pt'),
+        Locale('pt', 'BR')
       ],
     );
   }

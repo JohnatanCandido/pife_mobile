@@ -47,7 +47,7 @@ class AdController {
       UserDataController.save('lastDayPlayed', currentDay);
       UserDataController.save('gamesSinceLastAd', 1);
     } else {
-      _gamesSinceLastAd = UserDataController.load('gamesSinceLastAd', 'int') as int;
+      _gamesSinceLastAd = await UserDataController.load('gamesSinceLastAd', 'int') as int;
     }
   }
 
